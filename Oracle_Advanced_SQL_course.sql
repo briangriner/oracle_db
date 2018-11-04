@@ -111,7 +111,7 @@ department_id   department_name     manager_id  location_id test_col
 
 -- simple - no join between subquery and query; e.g. nested, in-line views
 
--- nested - in where clause
+-- nested - in where clause (evaluated before group by)
 select * from hr.employees
 where salary =
     (
@@ -124,6 +124,14 @@ select count(*) from
     select * from hr.employees
     where last_name like 'A%'
     );
+    
+-- subquery - in having clause (evaluated after group by)
+select department_name, avg(salary) from hr.emp_details_view
+group by department_name
+having avg(salary) >
+	(
+	select avg(salary) from hr.employees
+	);
 
 -- correlated subquery - contains join between subquery and query
 select *
